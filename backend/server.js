@@ -9,8 +9,8 @@ const app = express();
 app.use(express.json()); 
 app.use(cors({
     origin: [
-        "http://localhost:5173",             // For local testing
-        /\.vercel\.app$/                     // Allows any Vercel deployment URL
+        "https://buy-sell-sigma.vercel.app", // Your actual Vercel URL
+        "http://localhost:5173"
     ],
     credentials: true
 }));
