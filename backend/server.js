@@ -7,7 +7,13 @@ const app = express();
 
 // 1. Middleware
 app.use(express.json()); 
-app.use(cors()); 
+app.use(cors({
+    origin: [
+        "http://localhost:5173",             // For local testing
+        /\.vercel\.app$/                     // Allows any Vercel deployment URL
+    ],
+    credentials: true
+}));
 
 // 2. MongoDB Connection 
 mongoose.connect(process.env.MONGO_URI)
