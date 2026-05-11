@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const ItemPage = () => {
     const { id } = useParams();
@@ -8,7 +9,7 @@ const ItemPage = () => {
 
     useEffect(() => {
         const fetchItem = async () => {
-            const res = await axios.get(`http://localhost:5000/api/items/${id}`);
+            const res = await axios.get(`${API_BASE_URL}/api/items/${id}`);
             setItem(res.data);
         };
         fetchItem();
@@ -17,7 +18,7 @@ const ItemPage = () => {
     const addToCart = async () => {
         const token = localStorage.getItem('token');
         try {
-            await axios.post(`http://localhost:5000/api/users/cart/add/${id}`, {}, {
+            await axios.post(`${API_BASE_URL}/api/users/cart/add/${id}`, {}, {
                 headers: { 'x-auth-token': token }
             });
             alert("Added to cart!"); 

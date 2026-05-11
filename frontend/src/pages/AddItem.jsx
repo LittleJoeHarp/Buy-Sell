@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const AddItem = () => {
     const [item, setItem] = useState({ name: '', price: '', description: '', category: 'other', quantity: 1 });
@@ -9,7 +10,7 @@ const AddItem = () => {
 
     const fetchMyListings = async () => {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/items/my-listings', {
+        const res = await axios.get(`${API_BASE_URL}/api/items/my-listings`, {
             headers: { 'x-auth-token': token }
         });
         setMyListings(res.data);
@@ -23,7 +24,7 @@ const AddItem = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.post('http://localhost:5000/api/items/add', {
+            await axios.post(`${API_BASE_URL}/api/items/add`, {
                 name: item.name,
                 price: Number(item.price),
                 description: item.description,
@@ -55,7 +56,7 @@ const AddItem = () => {
         const token = localStorage.getItem('token');
         try {
             await axios.put(
-                `http://localhost:5000/api/items/${id}`,
+                `${API_BASE_URL}/api/items/${id}`,
                 {
                     name: editForm.name,
                     price: Number(editForm.price),
@@ -81,7 +82,7 @@ const AddItem = () => {
     const deleteListing = async (id) => {
         const token = localStorage.getItem('token');
         try {
-            await axios.delete(`http://localhost:5000/api/items/${id}`, {
+            await axios.delete(`${API_BASE_URL}/api/items/${id}`, {
                 headers: { 'x-auth-token': token }
             });
             alert('Listing deleted');

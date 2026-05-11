@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const Profile = () => {
     const [user, setUser] = useState({ firstName: '', lastName: '', age: '', contactNumber: '', email: '', sellerReviews: [] });
@@ -8,7 +9,7 @@ const Profile = () => {
 
     const fetchProfile = async () => {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/users/profile', {
+        const res = await axios.get(`${API_BASE_URL}/api/users/profile`, {
             headers: { 'x-auth-token': token }
         });
         setUser(res.data);
@@ -42,7 +43,7 @@ const Profile = () => {
 
         const token = localStorage.getItem('token');
         try {
-            await axios.put('http://localhost:5000/api/users/profile', 
+            await axios.put(`${API_BASE_URL}/api/users/profile`, 
                 {
                     firstName: user.firstName,
                     lastName: user.lastName,
@@ -65,7 +66,7 @@ const Profile = () => {
     const handleDeleteReview = async (reviewId) => {
         const token = localStorage.getItem('token');
         try {
-            await axios.delete(`http://localhost:5000/api/users/reviews/${reviewId}`, {
+            await axios.delete(`${API_BASE_URL}/api/users/reviews/${reviewId}`, {
                 headers: { 'x-auth-token': token }
             });
             await fetchProfile();

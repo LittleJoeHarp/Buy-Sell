@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const DeliverItems = () => {
     const [deliveries, setDeliveries] = useState([]);
@@ -7,7 +8,7 @@ const DeliverItems = () => {
     const token = localStorage.getItem('token');
 
     const fetchDeliveries = async () => {
-        const res = await axios.get('http://localhost:5000/api/orders/received', {
+        const res = await axios.get(`${API_BASE_URL}/api/orders/received`, {
             headers: { 'x-auth-token': token }
         });
         setDeliveries(res.data);
@@ -17,7 +18,7 @@ const DeliverItems = () => {
 
     const verify = async (id) => {
         try {
-            await axios.post('http://localhost:5000/api/orders/verify-otp', { orderId: id, otpInput: otp[id] }, {
+            await axios.post(`${API_BASE_URL}/api/orders/verify-otp`, { orderId: id, otpInput: otp[id] }, {
                 headers: { 'x-auth-token': token }
             });
             alert("Transaction Closed!");

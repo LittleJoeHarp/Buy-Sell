@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const Chat = () => {
     const [sessionId, setSessionId] = useState(null);
@@ -23,7 +24,7 @@ const Chat = () => {
     useEffect(() => {
         const initChat = async () => {
             try {
-                const res = await axios.post('http://localhost:5000/api/chat/start', {}, {
+                const res = await axios.post(`${API_BASE_URL}/api/chat/start`, {}, {
                     headers: { 'x-auth-token': token }
                 });
                 setSessionId(res.data.sessionId);
@@ -54,7 +55,7 @@ const Chat = () => {
 
         try {
             const res = await axios.post(
-                'http://localhost:5000/api/chat/message',
+                `${API_BASE_URL}/api/chat/message`,
                 { sessionId, message: userMessage },
                 { headers: { 'x-auth-token': token } }
             );

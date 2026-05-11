@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const AddItem = () => {
     const [formData, setFormData] = useState({
@@ -11,7 +12,7 @@ const AddItem = () => {
         const token = localStorage.getItem('token'); // Retrieve saved token [cite: 40]
         
         try {
-            await axios.post('http://localhost:5000/api/items/add', formData, {
+            await axios.post(`${API_BASE_URL}/api/items/add`, formData, {
                 headers: { 'x-auth-token': token } // Send token for authorization 
             });
             alert('Item listed successfully!');

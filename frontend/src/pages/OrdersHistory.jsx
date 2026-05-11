@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const OrdersHistory = () => {
     const [orders, setOrders] = useState({ pending: [], bought: [], sold: [] });
@@ -14,7 +15,7 @@ const OrdersHistory = () => {
             try {
                 setIsLoading(true);
                 setError('');
-                const res = await axios.get('http://localhost:5000/api/orders/history', {
+                const res = await axios.get(`${API_BASE_URL}/api/orders/history`, {
                     headers: { 'x-auth-token': token }
                 });
                 setOrders(res.data);
@@ -29,12 +30,12 @@ const OrdersHistory = () => {
 
     const cancelOrder = async (orderId) => {
         try {
-            await axios.post(`http://localhost:5000/api/orders/cancel/${orderId}`, {}, {
+            await axios.post(`${API_BASE_URL}/api/orders/cancel/${orderId}`, {}, {
                 headers: { 'x-auth-token': token }
             });
             alert('Order cancelled successfully');
             // Refresh history
-            const res = await axios.get('http://localhost:5000/api/orders/history', {
+            const res = await axios.get(`${API_BASE_URL}/api/orders/history`, {
                 headers: { 'x-auth-token': token }
             });
             setOrders(res.data);
@@ -47,7 +48,7 @@ const OrdersHistory = () => {
         const draft = reviewDraft[order._id] || {};
 
         try {
-            await axios.post(`http://localhost:5000/api/users/reviews/${order.sellerId?._id}`, {
+            await axios.post(`${API_BASE_URL}/api/users/reviews/${order.sellerId?._id}`, {
                 rating: Number(draft.rating),
                 comment: draft.comment || ''
             }, {

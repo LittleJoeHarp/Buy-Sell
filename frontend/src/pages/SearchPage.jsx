@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 import { Link } from 'react-router-dom';
 
 const SearchPage = () => {
@@ -14,7 +15,7 @@ const SearchPage = () => {
         const catQuery = selectedCategories.join(',');
         
         // Fetch items based on search and selected filters [cite: 61]
-        const res = await axios.get(`http://localhost:5000/api/items?search=${search}&categories=${catQuery}`, {
+        const res = await axios.get(`${API_BASE_URL}/api/items?search=${search}&categories=${catQuery}`, {
             headers: { 'x-auth-token': token }
         });
         setItems(res.data);

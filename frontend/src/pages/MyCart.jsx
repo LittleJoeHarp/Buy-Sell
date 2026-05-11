@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const MyCart = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -7,7 +8,7 @@ const MyCart = () => {
 
     const fetchCart = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/users/cart', {
+            const res = await axios.get(`${API_BASE_URL}/api/users/cart`, {
                 headers: { 'x-auth-token': token }
             });
             setCartItems(res.data);
@@ -20,7 +21,7 @@ const MyCart = () => {
 
     const removeItem = async (itemId) => {
         try {
-            await axios.delete(`http://localhost:5000/api/users/cart/${itemId}`, {
+            await axios.delete(`${API_BASE_URL}/api/users/cart/${itemId}`, {
                 headers: { 'x-auth-token': token }
             });
             fetchCart(); // Refresh cart
@@ -29,7 +30,7 @@ const MyCart = () => {
 
     const handleCheckout = async () => {
         try {
-            const res = await axios.post('http://localhost:5000/api/orders/checkout', {}, {
+            const res = await axios.post(`${API_BASE_URL}/api/orders/checkout`, {}, {
                 headers: { 'x-auth-token': token }
             });
             alert("Order Successful! Check 'Orders History' for your OTPs.");

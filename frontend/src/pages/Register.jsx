@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
@@ -31,7 +32,7 @@ const Register = () => {
                 setRecaptchaToken(token);
 
                 // Submit with token
-                const res = await axios.post('http://localhost:5000/api/auth/register', {
+                const res = await axios.post(`${API_BASE_URL}/api/auth/register`, {
                     ...formData,
                     recaptchaToken: token
                 });
@@ -42,8 +43,8 @@ const Register = () => {
             }
         } else {
             // Fallback without reCAPTCHA
-            try {
-                const res = await axios.post('http://localhost:5000/api/auth/register', {
+                try {
+                const res = await axios.post(`${API_BASE_URL}/api/auth/register`, {
                     ...formData,
                     recaptchaToken: ''
                 });
