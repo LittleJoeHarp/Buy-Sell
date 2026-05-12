@@ -7,6 +7,19 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY || '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
+const FRONTEND_URLS = (process.env.FRONTEND_URL || 'http://localhost:5173')
+    .split(',')
+    .map(url => url.trim())
+    .filter(Boolean);
+
+const isAllowedFrontendUrl = (url) => {
+    try {
+        const origin = new URL(url).origin;
+        return FRONTEND_URLS.includes(origin);
+    } catch {
+        return false;
+    }
+};
 
 // --- VERIFY RECAPTCHA TOKEN ---
 const verifyRecaptcha = async (token) => {
@@ -116,7 +129,7 @@ router.post('/login', async (req, res) => {
 // --- CAS LOGIN ROUTE ---
 router.post('/cas-login', async (req, res) => {
     try {
-        const { ticket } = req.body;
+        const { ticket, serviceUrl } = req.body;
 
         if (!ticket) {
             return res.status(400).json({ msg: 'CAS ticket is required' });
@@ -124,9 +137,10 @@ router.post('/cas-login', async (req, res) => {
 
         // Verify ticket with CAS server (IIIT Hyderabad uses CAS)
         const casServiceUrl = 'https://login.iiit.ac.in/cas/serviceValidate';
-        const appUrl = process.env.FRONTEND_URL 
-            ? `${process.env.FRONTEND_URL}/auth/cas-callback`
-            : 'http://localhost:5173/auth/cas-callback';
+        const defaultServiceUrl = `${FRONTEND_URLS[0]}/auth/cas-callback`;
+        const appUrl = serviceUrl && isAllowedFrontendUrl(serviceUrl)
+            ? serviceUrl
+            : defaultServiceUrl;
 
         try {
             const response = await axios.get(casServiceUrl, {

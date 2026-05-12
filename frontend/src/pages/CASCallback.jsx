@@ -21,7 +21,8 @@ const CASCallback = () => {
 
                 // Send ticket to backend for verification
                 const res = await axios.post(`${API_BASE_URL}/api/auth/cas-login`, {
-                    ticket: ticket
+                    ticket,
+                    serviceUrl: `${window.location.origin}/auth/cas-callback`
                 });
 
                 // Store token and user data

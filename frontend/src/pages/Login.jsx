@@ -21,7 +21,7 @@ const Login = () => {
     };
 
     const handleCASLogin = () => {
-        const serviceUrl = encodeURIComponent('http://localhost:5173/auth/cas-callback');
+        const serviceUrl = encodeURIComponent(`${window.location.origin}/auth/cas-callback`);
         const casLoginUrl = `https://login.iiit.ac.in/cas/login?service=${serviceUrl}`;
         window.location.href = casLoginUrl;
     };

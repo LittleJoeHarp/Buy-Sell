@@ -8,11 +8,19 @@ const app = express();
 // 1. Middleware
 app.use(express.json()); 
 const allowedOrigins = [
-    process.env.FRONTEND_URL || 'https://buy-sell-sigma.vercel.app',
+    ...(process.env.FRONTEND_URL || 'https://buy-sell-sigma.vercel.app')
+        .split(',')
+        .map(url => url.trim())
+        .filter(Boolean),
     'http://localhost:5173'
 ];
 app.use(cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error(`CORS blocked origin: ${origin}`));
+    },
     credentials: true
 }));
 
