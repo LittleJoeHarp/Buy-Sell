@@ -2,12 +2,13 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
     return (
-        <nav style={{ 
-            padding: '16px 30px', 
+        <nav className="app-navbar" style={{ 
+            padding: '16px clamp(14px, 3vw, 30px)', 
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             display: 'flex', 
-            gap: '25px',
+            gap: 'clamp(8px, 1.8vw, 25px)',
             alignItems: 'center',
+            flexWrap: 'wrap',
             borderBottom: '3px solid rgba(255,255,255,0.1)',
             boxShadow: '0 4px 20px rgba(102, 126, 234, 0.2)',
             position: 'sticky',
@@ -15,12 +16,12 @@ const Navbar = () => {
             zIndex: 100
         }}>
             {/* Site Branding */}
-            <Link to="/search" style={{ textDecoration: 'none', marginRight: '15px' }}>
+            <Link className="navbar-brand" to="/search" style={{ textDecoration: 'none', marginRight: '15px' }}>
                 <span style={{
-                    fontSize: '26px',
+                    fontSize: 'clamp(20px, 2.2vw, 26px)',
                     fontWeight: 'bold',
                     color: 'white',
-                    letterSpacing: '-0.5px',
+                    letterSpacing: 0,
                     textShadow: '0 2px 8px rgba(0,0,0,0.2)',
                     display: 'flex',
                     alignItems: 'center',
@@ -40,12 +41,55 @@ const Navbar = () => {
             <Link to="/support" style={navLinkStyle} className="nav-link">💬 Support</Link>
             
             <style>{`
+                .app-navbar {
+                    width: 100%;
+                }
+
                 .nav-link:hover {
                     background-color: rgba(255, 255, 255, 0.2) !important;
                     transform: translateY(-2px) !important;
                 }
+
+                @media (max-width: 900px) {
+                    .app-navbar {
+                        justify-content: center;
+                    }
+
+                    .navbar-brand {
+                        flex: 1 0 100%;
+                        display: flex;
+                        justify-content: center;
+                        margin-right: 0 !important;
+                    }
+
+                    .nav-link {
+                        font-size: 13px !important;
+                        padding: 7px 9px !important;
+                    }
+
+                    .logout-button {
+                        margin-left: 0 !important;
+                    }
+                }
+
+                @media (max-width: 520px) {
+                    .app-navbar {
+                        gap: 6px !important;
+                        padding: 12px 10px !important;
+                    }
+
+                    .nav-link {
+                        flex: 1 1 calc(33.333% - 8px);
+                        text-align: center;
+                    }
+
+                    .logout-button {
+                        flex: 1 1 100%;
+                    }
+                }
             `}</style>
             <button 
+                className="logout-button"
                 onClick={() => { localStorage.clear(); window.location.href = '/login'; }}
                 style={{ 
                     marginLeft: 'auto', 
@@ -84,6 +128,7 @@ const navLinkStyle = {
     borderRadius: '6px',
     transition: 'all 0.3s',
     whiteSpace: 'nowrap',
+    minWidth: 0,
 };
 
 export default Navbar;

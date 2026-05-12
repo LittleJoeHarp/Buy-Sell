@@ -7,7 +7,7 @@ const Footer = () => {
             textAlign: 'center',
             padding: '30px 20px',
             borderTop: '3px solid rgba(255,255,255,0.1)',
-            marginTop: '60px',
+            marginTop: 'auto',
             fontSize: '14px',
             boxShadow: '0 -4px 20px rgba(102, 126, 234, 0.2)'
         }}>

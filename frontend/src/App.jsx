@@ -20,11 +20,11 @@ function App() {
 
   return (
     <Router>
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div className="app-shell">
         {/* Navbar only shows if user is logged in */}
         {isAuthenticated && <Navbar />}
         
-        <main style={{ flex: 1 }}>
+        <main className="app-main">
           <Routes>
             {/* Auth Routes */}
             <Route path="/login" element={<Login />} />
