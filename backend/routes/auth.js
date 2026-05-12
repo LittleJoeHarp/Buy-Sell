@@ -23,6 +23,10 @@ const isAllowedFrontendUrl = (url) => {
 
 // --- VERIFY RECAPTCHA TOKEN ---
 const verifyRecaptcha = async (token) => {
+    if (!token) {
+        return false;
+    }
+
     try {
         const response = await axios.post(
             `https://www.google.com/recaptcha/api/siteverify`,
@@ -34,7 +38,12 @@ const verifyRecaptcha = async (token) => {
                 }
             }
         );
-        return response.data.success && response.data.score > 0.5;
+        if (!response.data.success) {
+            console.error('reCAPTCHA rejected:', response.data['error-codes']);
+            return false;
+        }
+
+        return response.data.score > 0.5;
     } catch (err) {
         console.error('reCAPTCHA verification failed:', err);
         return false;
@@ -78,7 +87,7 @@ router.post('/register', async (req, res) => {
         await user.save();
         res.status(201).json({ msg: "User registered successfully" });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ msg: err.message });
     }
 });
 

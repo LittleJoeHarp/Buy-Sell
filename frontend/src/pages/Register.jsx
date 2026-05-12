@@ -7,52 +7,68 @@ const Register = () => {
     const [formData, setFormData] = useState({
         firstName: '', lastName: '', email: '', age: '', contactNumber: '', password: ''
     });
-    const [recaptchaToken, setRecaptchaToken] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
+    const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
     // Load reCAPTCHA script
     useEffect(() => {
+        if (!recaptchaSiteKey) return;
+
         const script = document.createElement('script');
-        script.src = 'https://www.google.com/recaptcha/api.js';
+        script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
         script.async = true;
         script.defer = true;
         document.body.appendChild(script);
 
-        window.grecaptcha = window.grecaptcha || {};
-    }, []);
+        return () => {
+            document.body.removeChild(script);
+        };
+    }, [recaptchaSiteKey]);
+
+    const getErrorMessage = (err) => {
+        return err.response?.data?.msg || err.response?.data?.error || err.message || 'Registration failed';
+    };
+
+    const getRecaptchaToken = () => {
+        return new Promise((resolve, reject) => {
+            if (!recaptchaSiteKey) {
+                reject(new Error('reCAPTCHA site key is missing. Check VITE_RECAPTCHA_SITE_KEY.'));
+                return;
+            }
+
+            if (!window.grecaptcha) {
+                reject(new Error('reCAPTCHA is still loading. Please try again.'));
+                return;
+            }
+
+            window.grecaptcha.ready(async () => {
+                try {
+                    const token = await window.grecaptcha.execute(recaptchaSiteKey, { action: 'register' });
+                    resolve(token);
+                } catch (err) {
+                    reject(err);
+                }
+            });
+        });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
-        // Get reCAPTCHA token
-        if (window.grecaptcha && window.grecaptcha.execute) {
-            try {
-                const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-                const token = await window.grecaptcha.execute(siteKey, { action: 'register' });
-                setRecaptchaToken(token);
-
-                // Submit with token
-                const res = await axios.post(`${API_BASE_URL}/api/auth/register`, {
-                    ...formData,
-                    recaptchaToken: token
-                });
-                alert(res.data.msg);
-                navigate('/login');
-            } catch (err) {
-                alert(err.response?.data?.msg || 'Registration failed');
-            }
-        } else {
-            // Fallback without reCAPTCHA
-                try {
-                const res = await axios.post(`${API_BASE_URL}/api/auth/register`, {
-                    ...formData,
-                    recaptchaToken: ''
-                });
-                alert(res.data.msg);
-                navigate('/login');
-            } catch (err) {
-                alert(err.response?.data?.msg || 'Registration failed');
-            }
+        try {
+            const token = await getRecaptchaToken();
+            const res = await axios.post(`${API_BASE_URL}/api/auth/register`, {
+                ...formData,
+                recaptchaToken: token
+            });
+            alert(res.data.msg);
+            navigate('/login');
+        } catch (err) {
+            alert(getErrorMessage(err));
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -175,18 +191,20 @@ const Register = () => {
                     />
                     <button 
                         type="submit"
+                        disabled={isSubmitting}
                         style={{
                             padding: '14px',
                             background: 'linear-gradient(135deg, #667eea, #764ba2)',
                             color: 'white',
                             border: 'none',
                             borderRadius: '10px',
-                            cursor: 'pointer',
+                            cursor: isSubmitting ? 'not-allowed' : 'pointer',
                             fontSize: '16px',
                             fontWeight: '600',
                             marginTop: '10px',
                             transition: 'all 0.3s',
                             boxShadow: '0 10px 25px rgba(102, 126, 234, 0.3)',
+                            opacity: isSubmitting ? 0.7 : 1,
                         }}
                         onMouseEnter={(e) => {
                             e.target.style.transform = 'translateY(-2px)';
@@ -197,7 +215,7 @@ const Register = () => {
                             e.target.style.boxShadow = '0 10px 25px rgba(102, 126, 234, 0.3)';
                         }}
                     >
-                        Create Account
+                        {isSubmitting ? 'Creating Account...' : 'Create Account'}
                     </button>
                     <p style={{ fontSize: '11px', color: '#888', textAlign: 'center', margin: '10px 0 0 0' }}>
                         This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" style={{ color: '#667eea', textDecoration: 'none' }}>Privacy Policy</a> and <a href="https://policies.google.com/terms" style={{ color: '#667eea', textDecoration: 'none' }}>Terms of Service</a> apply.
