@@ -1,4 +1,5 @@
 # MergeMarket
+https://buy-sell-sigma.vercel.app
 
 MergeMarket is a full-stack buy-sell marketplace for the IIIT Hyderabad community. Users can register with an IIIT email, log in with password or IIIT CAS, list items, search listings, manage carts, place orders, verify deliveries with OTP, review sellers, and use a Gemini-powered support chatbot.
 
