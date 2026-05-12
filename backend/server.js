@@ -7,11 +7,12 @@ const app = express();
 
 // 1. Middleware
 app.use(express.json()); 
+const allowedOrigins = [
+    process.env.FRONTEND_URL || 'https://buy-sell-sigma.vercel.app',
+    'http://localhost:5173'
+];
 app.use(cors({
-    origin: [
-        "https://buy-sell-sigma.vercel.app", // Your actual Vercel URL
-        "http://localhost:5173"
-    ],
+    origin: allowedOrigins,
     credentials: true
 }));
 

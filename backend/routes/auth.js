@@ -124,7 +124,9 @@ router.post('/cas-login', async (req, res) => {
 
         // Verify ticket with CAS server (IIIT Hyderabad uses CAS)
         const casServiceUrl = 'https://login.iiit.ac.in/cas/serviceValidate';
-        const appUrl = 'http://localhost:5173/auth/cas-callback';
+        const appUrl = process.env.FRONTEND_URL 
+            ? `${process.env.FRONTEND_URL}/auth/cas-callback`
+            : 'http://localhost:5173/auth/cas-callback';
 
         try {
             const response = await axios.get(casServiceUrl, {
