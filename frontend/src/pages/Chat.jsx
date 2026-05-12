@@ -8,6 +8,7 @@ const Chat = () => {
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isInitializing, setIsInitializing] = useState(true);
+    const [initError, setInitError] = useState('');
     const messagesEndRef = useRef(null);
     const token = localStorage.getItem('token');
 
@@ -34,6 +35,7 @@ const Chat = () => {
                 }]);
             } catch (err) {
                 console.error('Failed to start chat session', err);
+                setInitError(err.response?.data?.msg || 'Failed to start chat session. Please log in again.');
             } finally {
                 setIsInitializing(false);
             }
@@ -73,6 +75,14 @@ const Chat = () => {
         return (
             <div style={{ padding: '20px', textAlign: 'center', color: 'white' }}>
                 <p>Loading chat...</p>
+            </div>
+        );
+    }
+
+    if (initError) {
+        return (
+            <div style={{ padding: '20px', textAlign: 'center', color: '#333' }}>
+                <p>{initError}</p>
             </div>
         );
     }

@@ -3,8 +3,10 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-// Initialize Gemini API (use environment variable or free API key)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Initialize Gemini API
+const genAI = process.env.GEMINI_API_KEY
+    ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+    : null;
 
 // Store chat sessions in memory (for production, use database)
 const chatSessions = {};
@@ -29,6 +31,12 @@ router.post('/message', auth, async (req, res) => {
     const { sessionId, message } = req.body;
 
     try {
+        if (!genAI) {
+            return res.status(500).json({
+                msg: 'Chatbot is not configured. Add GEMINI_API_KEY on the backend.'
+            });
+        }
+
         if (!sessionId || !message) {
             return res.status(400).json({ msg: 'sessionId and message are required' });
         }
@@ -49,7 +57,9 @@ router.post('/message', auth, async (req, res) => {
         });
 
         // Build conversation history for Gemini
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({
+            model: process.env.GEMINI_MODEL || "gemini-1.5-flash"
+        });
 
         // Create prompt with context about the Buy-Sell platform
         const systemContext = `You are a helpful support chatbot for IIITH Buy-Sell, a peer-to-peer marketplace at IIIT Hyderabad. 
@@ -78,8 +88,14 @@ Keep responses concise and relevant to the user's query.`;
             history: session.history
         });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ msg: 'Failed to get response from chatbot' });
+        const status = err.status || err.statusCode || 500;
+        console.error('Gemini chat error:', {
+            status,
+            message: err.message
+        });
+        res.status(status >= 400 && status < 600 ? status : 500).json({
+            msg: err.message || 'Failed to get response from chatbot'
+        });
     }
 });
 

@@ -120,7 +120,10 @@ const Register = () => {
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
                         backgroundClip: 'text',
-                        margin: '0 0 10px 0'
+                        margin: '0 0 10px 0',
+                        lineHeight: '1.25',
+                        paddingBottom: '4px',
+                        display: 'inline-block'
                     }}>
                         MergeMarket
                     </h1>
